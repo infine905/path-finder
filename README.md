@@ -9,6 +9,6 @@ A mathematical project to find the shortest path in a graph using the Dijkstra m
 
 ## :telescope: Dependencies
 1. [OpenGL](https://www.opengl.org/)
-2. [imgui](https://www.glfw.org/)
+2. [GLFW](https://www.glfw.org/)
 3. [imgui (docking branch)](https://github.com/ocornut/imgui/tree/docking)
 ****
