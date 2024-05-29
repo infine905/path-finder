@@ -33,6 +33,7 @@ struct {
 } Settings;
 
 float distance = 0;
+bool showMatrix = true;
 std::string output;
 
 ImVec2 PosToAddPoint;
@@ -40,6 +41,7 @@ ImVec2 PosToAddPoint;
 std::vector<Point> points;
 std::vector<Line> lines;
 std::vector<int> path_lines;
+std::vector<std::vector<float>> matrix;
 
 void RenderUI(GLFWwindow* window, ImGuiIO& io) 
 {
@@ -229,9 +231,10 @@ void RenderUI(GLFWwindow* window, ImGuiIO& io)
 
         if (ImGui::Button("Расчитать") && compute_start_idx != -1 && compute_end_idx != -1 && compute_start_idx != compute_end_idx) {
 
-            auto [shortest_path_mass, path_lines] = find_path(lines, compute_start_idx, compute_end_idx);
+            auto [shortest_path_mass, path_lines, adx_matrix] = find_path(lines, compute_start_idx, compute_end_idx);
 
             distance = shortest_path_mass;
+            matrix = adx_matrix;
             for (size_t i = 0; i < lines.size(); ++i) {
                 for (const auto& path_line : path_lines) {
                     if (i == path_line) {
@@ -263,4 +266,36 @@ void RenderUI(GLFWwindow* window, ImGuiIO& io)
 
         ImGui::End();
     }
+
+    if (ImGui::Begin("Матрица смежности", &showMatrix)) {
+        int rows = matrix.size();
+        int cols = rows > 0 ? matrix[0].size() : 0;
+
+        if (ImGui::BeginTable("MatrixTable", cols + 1, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg) && rows > 0) {
+            // Отображение заголовков столбцов
+            ImGui::TableNextRow(ImGuiTableRowFlags_Headers);
+            ImGui::TableSetColumnIndex(0);
+            ImGui::Text("");
+
+            for (int col = 0; col < cols; ++col) {
+                ImGui::TableSetColumnIndex(col + 1);
+                ImGui::Text("%s",  points[col].name.c_str());
+            }
+
+            for (int row = 0; row < rows; ++row) {
+                ImGui::TableNextRow();
+                ImGui::TableSetColumnIndex(0);
+                ImGui::Text("%s", points[row].name.c_str());
+
+                for (int col = 0; col < cols; ++col) {
+                    ImGui::TableSetColumnIndex(col + 1);
+                    ImGui::PushID(row * cols + col);
+                    ImGui::Text("%g", matrix[row][col]);
+                    ImGui::PopID();
+                }
+            }
+            ImGui::EndTable();
+        }
+    }
+    ImGui::End();
 }

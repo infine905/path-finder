@@ -6,4 +6,4 @@
 
 #include "structs.h"
 
-std::pair<float, std::vector<int>> find_path(const std::vector<Line>& lines, int start, int end);
+std::tuple<float, std::vector<int>, std::vector<std::vector<float>>> find_path(const std::vector<Line>& lines, int start, int end);
