@@ -6,6 +6,7 @@ A mathematical project to find the shortest path in a graph using the Dijkstra m
 1. Render using GLFW and OpenGL 3
 2. The ability to build your own graphs
 3. Dijkstra's method for pathfinding
+4. Construction and display of the adjacency matrix
 
 ## :telescope: Dependencies
 1. [OpenGL](https://www.opengl.org/)
