@@ -267,12 +267,12 @@ void RenderUI(GLFWwindow* window, ImGuiIO& io)
         ImGui::End();
     }
 
+    //Adjacency Matrix Table
     if (ImGui::Begin("Матрица смежности", &showMatrix)) {
         int rows = matrix.size();
         int cols = rows > 0 ? matrix[0].size() : 0;
 
         if (ImGui::BeginTable("MatrixTable", cols + 1, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg) && rows > 0) {
-            // Отображение заголовков столбцов
             ImGui::TableNextRow(ImGuiTableRowFlags_Headers);
             ImGui::TableSetColumnIndex(0);
             ImGui::Text("");

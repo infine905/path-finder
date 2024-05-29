@@ -1,6 +1,8 @@
 #include "compute.h"
 
 std::tuple<float, std::vector<int>, std::vector<std::vector<float>>> find_path(const std::vector<Line>& lines, int start, int end) {
+
+    //adjacency matrix staff
     int max_vertex = 0;
     for (const auto& line : lines) {
         if (line.start_idx > max_vertex) max_vertex = line.start_idx;
