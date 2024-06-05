@@ -181,6 +181,8 @@ void RenderUI(GLFWwindow* window, ImGuiIO& io)
         static int compute_start_idx = -1;
         static int compute_end_idx = -1;
 
+        static int edit_idx = -1;
+
         ImGui::Text("Соеденить точки:"); ImGui::Separator();
         if (ImGui::BeginCombo("Стартвая Точка", connection_start_idx == -1 ? "Выбрать" : points[connection_start_idx].name.c_str())) {
             for (size_t i = 0; i < points.size(); ++i) {
@@ -207,11 +209,28 @@ void RenderUI(GLFWwindow* window, ImGuiIO& io)
             connection_start_idx = -1;
             connection_end_idx = -1;
         }
+        
+        
+        ImGui::Spacing(); ImGui::Text("Изменить Вектор:"); ImGui::Separator();
+        if (ImGui::BeginCombo("Вектор", edit_idx == -1 ? "Выбрать" : std::format("{} -> {}", points[lines[edit_idx].start_idx].name.c_str(), points[lines[edit_idx].end_idx].name.c_str()).c_str())) {
+            for (size_t i = 0; i < lines.size(); ++i) {
+                //char line_str[255];
+                //sprintf_s(line_str, "%s -> %s", points[lines[i].start_idx].name.c_str(), points[lines[i].end_idx].name.c_str());
+                if (ImGui::Selectable(std::format("{} -> {}", points[lines[i].start_idx].name.c_str(), points[lines[i].end_idx].name.c_str()).c_str())) {
+                    edit_idx = i;
+                }
+            }
+            ImGui::EndCombo();
+        }
 
-        ImGui::Spacing();
+        if (edit_idx > -1) {
+            ImGui::InputFloat("Масса", &lines[edit_idx].mass);
+        }
 
-        ImGui::Text("Расчитать Путь:"); ImGui::Separator();
-        if (ImGui::BeginCombo("Из Точки", compute_start_idx == -1 ? "Выбрать" : points[compute_start_idx].name.c_str())) {
+        
+
+        ImGui::Spacing(); ImGui::Text("Расчитать Путь:"); ImGui::Separator();
+        if (ImGui::BeginCombo("##Из Точки", compute_start_idx == -1 ? "Выбрать" : points[compute_start_idx].name.c_str(), ImGuiComboFlags_WidthFitPreview)) {
             for (size_t i = 0; i < points.size(); ++i) {
                 if (ImGui::Selectable(points[i].name.c_str())) {
                     compute_start_idx = i;
@@ -219,8 +238,8 @@ void RenderUI(GLFWwindow* window, ImGuiIO& io)
             }
             ImGui::EndCombo();
         }
-
-        if (ImGui::BeginCombo("В Точку", compute_end_idx == -1 ? "Выбрать" : points[compute_end_idx].name.c_str())) {
+        ImGui::SameLine(); ImGui::Text("->"); ImGui::SameLine();
+        if (ImGui::BeginCombo("##В Точку", compute_end_idx == -1 ? "Выбрать" : points[compute_end_idx].name.c_str(), ImGuiComboFlags_WidthFitPreview)) {
             for (size_t i = 0; i < points.size(); ++i) {
                 if (ImGui::Selectable(points[i].name.c_str())) {
                     compute_end_idx = i;
@@ -260,7 +279,7 @@ void RenderUI(GLFWwindow* window, ImGuiIO& io)
         }
 
         //Display distance
-        ImGui::Spacing(); ImGui::Separator(); {
+        ImGui::Spacing(); {
             ImGui::Text(output.c_str());
         }
 
@@ -268,7 +287,7 @@ void RenderUI(GLFWwindow* window, ImGuiIO& io)
     }
 
     //Adjacency Matrix Table
-    if (ImGui::Begin("Матрица смежности", &showMatrix)) {
+    if (ImGui::Begin("Матрица достижимости", &showMatrix)) {
         int rows = matrix.size();
         int cols = rows > 0 ? matrix[0].size() : 0;
 
@@ -290,7 +309,7 @@ void RenderUI(GLFWwindow* window, ImGuiIO& io)
                 for (int col = 0; col < cols; ++col) {
                     ImGui::TableSetColumnIndex(col + 1);
                     ImGui::PushID(row * cols + col);
-                    ImGui::Text("%g", matrix[row][col]);
+                    ImGui::Text("%g", col == row ? 0 : matrix[row][col]);
                     ImGui::PopID();
                 }
             }
